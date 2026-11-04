@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Identity -->
+    <string name="app_name">Quick Notes</string>
+    <string name="calculator_app_name">Calculator</string>
+    <string name="app_tagline">Markdown Notes and Encrypted Vault</string>
+    <string name="app_version">1.0.0</string>
+
+    <!-- Navigation Tabs -->
+    <string name="nav_notes">Notes</string>
+    <string name="nav_folders">Folders</string>
+    <string name="nav_vault">Vault</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Drawer Navigation -->
+    <string name="drawer_title">Quick Notes</string>
+    <string name="drawer_all_notes">All Notes</string>
+    <string name="drawer_folders">Folders</string>
+    <string name="drawer_tags">Tags</string>
+    <string name="drawer_archive">Archive</string>
+    <string name="drawer_trash">Trash</string>
+    <string name="drawer_export">Export Notes</string>
+    <string name="drawer_import">Import Notes</string>
+    <string name="drawer_theme">Theme</string>
+    <string name="drawer_about">About</string>
+
+    <!-- Common Actions & Buttons -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_restore">Restore</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_create">Create</string>
+    <string name="action_rename">Rename</string>
+    <string name="action_search">Search</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_close">Close</string>
+    <string name="action_undo">Undo</string>
+    <string name="action_redo">Redo</string>
+    <string name="action_pin">Pin</string>
+    <string name="action_unpin">Unpin</string>
+    <string name="action_archive">Archive</string>
+    <string name="action_unarchive">Unarchive</string>
+    <string name="action_empty_trash">Empty Trash</string>
+    <string name="action_delete_forever">Delete Forever</string>
+    <string name="action_lock_now">Lock Now</string>
+    <string name="action_unlock">Unlock</string>
+    <string name="action_skip">Skip</string>
+    <string name="action_next">Next</string>
+    <string name="action_get_started">Get Started</string>
+    <string name="action_grant_permission">Grant Permission</string>
+    <string name="action_refresh">Refresh</string>
+
+    <!-- Content Descriptions for Icons -->
+    <string name="cd_menu">Open navigation menu</string>
+    <string name="cd_search">Search notes</string>
+    <string name="cd_clear_search">Clear search query</string>
+    <string name="cd_view_mode">Toggle card and list view</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_navigate_back">Navigate back</string>
+    <string name="cd_add_note">Create new note</string>
+    <string name="cd_add_folder">Create new folder</string>
+    <string name="cd_add_key">Add new API key</string>
+    <string name="cd_pin_note">Toggle note pinned status</string>
+    <string name="cd_folder_icon">Folder</string>
+    <string name="cd_tag_icon">Tag</string>
+    <string name="cd_date_icon">Date</string>
+    <string name="cd_vault_lock">Vault security lock</string>
+    <string name="cd_copy_key">Copy API key to clipboard</string>
+    <string name="cd_toggle_visibility">Toggle passcode or key visibility</string>
+    <string name="cd_delete_item">Delete item</string>
+    <string name="cd_restore_item">Restore item</string>
+    <string name="cd_app_logo">Quick Notes logo</string>
+
+    <!-- Notes Home Screen -->
+    <string name="notes_pinned_header">Pinned</string>
+    <string name="notes_all_header">All Notes</string>
+    <string name="notes_search_placeholder">Search notes, folders, and tags...</string>
+    <string name="notes_empty_title">No notes yet</string>
+    <string name="notes_empty_subtitle">Create your first note to start organizing your thoughts.</string>
+    <string name="notes_search_empty_title">No matching notes</string>
+    <string name="notes_search_empty_subtitle">Try searching with different keywords or tags.</string>
+    <string name="notes_selected_count">%1$d selected</string>
+    <string name="notes_moved_to_trash">Moved to trash</string>
+    <string name="notes_archived">Archived note</string>
+    <string name="notes_restored">Note restored</string>
+
+    <!-- Editor Screen -->
+    <string name="editor_title_hint">Title</string>
+    <string name="editor_body_hint">Write your note in Markdown...</string>
+    <string name="editor_mode_edit">Edit</string>
+    <string name="editor_mode_preview">Preview</string>
+    <string name="editor_status_saved">Saved</string>
+    <string name="editor_status_saving">Saving...</string>
+    <string name="editor_status_unsaved">Unsaved changes</string>
+    <string name="editor_stats_words">%1$d words</string>
+    <string name="editor_stats_chars">%1$d characters</string>
+    <string name="editor_stats_reading_time">%1$d min read</string>
+    <string name="editor_find_placeholder">Find in note...</string>
+    <string name="editor_replace_placeholder">Replace with...</string>
+    <string name="editor_replace_action">Replace</string>
+    <string name="editor_replace_all_action">All</string>
+    <string name="editor_find_matches">%1$d of %2$d</string>
+    <string name="editor_find_no_matches">0 of 0</string>
+    <string name="editor_discard_dialog_title">Discard changes?</string>
+    <string name="editor_discard_dialog_message">You have unsaved changes. Are you sure you want to discard them?</string>
+    <string name="editor_discard_confirm">Discard</string>
+
+    <!-- Markdown Toolbar Tooltips & Actions -->
+    <string name="toolbar_bold">Bold</string>
+    <string name="toolbar_italic">Italic</string>
+    <string name="toolbar_underline">Underline</string>
+    <string name="toolbar_strikethrough">Strikethrough</string>
+    <string name="toolbar_h1">Heading 1</string>
+    <string name="toolbar_h2">Heading 2</string>
+    <string name="toolbar_h3">Heading 3</string>
+    <string name="toolbar_bullet_list">Bullet list</string>
+    <string name="toolbar_numbered_list">Numbered list</string>
+    <string name="toolbar_checklist">Task checklist</string>
+    <string name="toolbar_code">Code block</string>
+    <string name="toolbar_link">Insert link</string>
+    <string name="toolbar_highlight">Highlight</string>
+    <string name="toolbar_find">Find and replace</string>
+
+    <!-- Insert Link Dialog -->
+    <string name="dialog_link_title">Insert Markdown Link</string>
+    <string name="dialog_link_text">Display Text</string>
+    <string name="dialog_link_url">URL</string>
+
+    <!-- Color Accent Selection -->
+    <string name="color_default">Default</string>
+    <string name="color_teal">Teal</string>
+    <string name="color_amber">Amber</string>
+    <string name="color_rose">Rose</string>
+    <string name="color_indigo">Indigo</string>
+    <string name="color_emerald">Emerald</string>
+
+    <!-- Folders Screen -->
+    <string name="folders_title">Folders</string>
+    <string name="folders_empty_title">No folders yet</string>
+    <string name="folders_empty_subtitle">Create folders to organize your notes into categories.</string>
+    <string name="folders_new_title">New Folder</string>
+    <string name="folders_rename_title">Rename Folder</string>
+    <string name="folders_name_hint">Folder name</string>
+    <string name="folders_notes_count">%1$d notes</string>
+    <string name="folders_delete_confirm_title">Delete Folder?</string>
+    <string name="folders_delete_confirm_message">Notes inside this folder will be moved to the Trash. Continue?</string>
+
+    <!-- Tags Screen -->
+    <string name="tags_title">Tags</string>
+    <string name="tags_empty_title">No tags yet</string>
+    <string name="tags_empty_subtitle">Add tags in the note editor using YAML front matter or the tag selector.</string>
+    <string name="tags_add_hint">Add tag...</string>
+    <string name="tags_notes_count">%1$d notes</string>
+
+    <!-- Trash & Archive Screens -->
+    <string name="trash_title">Trash</string>
+    <string name="trash_info_banner">Notes in Trash are automatically deleted forever after 30 days.</string>
+    <string name="trash_empty_title">Trash is empty</string>
+    <string name="trash_empty_subtitle">Deleted notes will appear here before being permanently removed.</string>
+    <string name="trash_empty_confirm_title">Empty Trash?</string>
+    <string name="trash_empty_confirm_message">This will permanently delete all notes currently in the trash. This action cannot be undone.</string>
+    <string name="trash_days_left">%1$d days left</string>
+    <string name="archive_title">Archive</string>
+    <string name="archive_empty_title">Archive is empty</string>
+    <string name="archive_empty_subtitle">Archived notes stay safe here without cluttering your home screen.</string>
+
+    <!-- Vault Screens -->
+    <string name="vault_title">Encrypted Vault</string>
+    <string name="vault_locked_title">Vault is Locked</string>
+    <string name="vault_locked_subtitle">Enter your 8+ character passcode to access stored API keys.</string>
+    <string name="vault_passcode_hint">Passcode</string>
+    <string name="vault_confirm_passcode_hint">Confirm Passcode</string>
+    <string name="vault_wrong_passcode">Incorrect passcode</string>
+    <string name="vault_attempts_left">%1$d attempts remaining before temporary lockout</string>
+    <string name="vault_locked_out">Too many failed attempts. Try again in %1$d seconds.</string>
+    <string name="vault_forgot_passcode">Forgot Passcode?</string>
+    <string name="vault_reset_with_recovery">Reset with Recovery Key</string>
+    <string name="vault_empty_title">No API keys stored</string>
+    <string name="vault_empty_subtitle">Securely store your AI and developer API keys with AES-GCM encryption.</string>
+    <string name="vault_add_key_title">Add API Key</string>
+    <string name="vault_edit_key_title">Edit API Key</string>
+    <string name="vault_provider_hint">Provider Name (e.g., Gemini, Groq)</string>
+    <string name="vault_key_hint">API Key</string>
+    <string name="vault_copied_snackbar">API key copied. Clipboard will clear in 30 seconds.</string>
+    <string name="vault_clipboard_cleared">Clipboard cleared for security.</string>
+    <string name="vault_delete_key_confirm_title">Delete API Key?</string>
+    <string name="vault_delete_key_confirm_message">Are you sure you want to delete the key for %1$s?</string>
+
+    <!-- Vault Setup Flow -->
+    <string name="vault_setup_title">Set Up Private Vault</string>
+    <string name="vault_setup_step1_title">Create Passcode</string>
+    <string name="vault_setup_step1_desc">Your passcode encrypts all stored API keys. It must be at least 8 characters long and can include letters, digits, and symbols.</string>
+    <string name="vault_strength_weak">Weak (minimum 8 characters)</string>
+    <string name="vault_strength_fair">Fair (mix letters and numbers)</string>
+    <string name="vault_strength_strong">Strong (letters, numbers, and symbols)</string>
+    <string name="vault_passcode_mismatch">Passcodes do not match</string>
+    <string name="vault_passcode_too_short">Passcode must be at least 8 characters</string>
+    <string name="vault_setup_step2_title">Your Recovery Key</string>
+    <string name="vault_setup_step2_desc">Save this 32-character recovery key in a safe place. If you ever forget your passcode, this is the only way to recover your vault.</string>
+    <string name="vault_saved_checkbox">I have saved my recovery key in a safe place</string>
+    <string name="vault_setup_complete_action">Complete Setup</string>
+
+    <!-- Vault Recovery Screen -->
+    <string name="vault_recovery_title">Vault Recovery</string>
+    <string name="vault_recovery_desc">Enter the 32-character recovery key generated during initial vault setup.</string>
+    <string name="vault_recovery_key_hint">Recovery Key</string>
+    <string name="vault_recovery_invalid">Invalid recovery key</string>
+    <string name="vault_recovery_success">Recovery key verified. Set a new passcode below.</string>
+
+    <!-- Storage Permission Screen -->
+    <string name="permission_storage_title">Storage Access Required</string>
+    <string name="permission_storage_desc">Quick Notes stores your notes as plain Markdown files in Documents/QuickNotes/ so they remain accessible, portable, and editable by any app on your device.\n\nPlease grant All Files Access to continue.</string>
+    <string name="permission_storage_action">Grant Storage Access</string>
+    <string name="permission_storage_waiting">Checking permission status...</string>
+
+    <!-- Onboarding Flow -->
+    <string name="onboarding_slide1_title">Markdown as Files</string>
+    <string name="onboarding_slide1_desc">Your notes live as genuine .md files in Documents/QuickNotes/. You own your data with zero vendor lock-in.</string>
+    <string name="onboarding_slide2_title">Folders and Tags</string>
+    <string name="onboarding_slide2_desc">Organize notes seamlessly with hierarchical folders and YAML front matter tags for quick retrieval.</string>
+    <string name="onboarding_slide3_title">Encrypted Vault</string>
+    <string name="onboarding_slide3_desc">Store sensitive API keys safely with Android Keystore AES-GCM encryption and auto-clearing clipboard.</string>
+    <string name="onboarding_slide4_title">Rich Markdown Editor</string>
+    <string name="onboarding_slide4_desc">Write with ease using quick formatting tools, live markdown preview, checklists, and search.</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_system">System Default</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_view_title">Default Notes View</string>
+    <string name="settings_view_grid">Card Grid</string>
+    <string name="settings_view_list">List</string>
+    <string name="settings_section_storage">Storage and Backup</string>
+    <string name="settings_storage_location">Notes Directory: Documents/QuickNotes/</string>
+    <string name="settings_export_title">Export All Notes</string>
+    <string name="settings_export_desc">Save a ZIP archive containing all your .md notes.</string>
+    <string name="settings_import_title">Import Notes</string>
+    <string name="settings_import_desc">Import .md notes from a ZIP archive.</string>
+    <string name="settings_section_vault">Vault Security</string>
+    <string name="settings_change_passcode">Change Vault Passcode</string>
+    <string name="settings_view_recovery">View Recovery Key</string>
+    <string name="settings_lock_now">Lock Vault Now</string>
+    <string name="settings_section_disguise">App Icon Disguise</string>
+    <string name="settings_disguise_title">Calculator Disguise Mode</string>
+    <string name="settings_disguise_desc">Disguise Quick Notes as a standard Calculator icon on your home screen. Tapping it opens directly to the vault passcode.</string>
+    <string name="settings_disguise_enabled">Calculator Disguise is active</string>
+    <string name="settings_disguise_disabled">Quick Notes icon is active</string>
+    <string name="settings_disguise_dialog_title">Enable Calculator Disguise?</string>
+    <string name="settings_disguise_dialog_message">The launcher icon will change to Calculator. The app will launch directly into the vault passcode entry screen.</string>
+    <string name="settings_section_about">About Quick Notes</string>
+    <string name="settings_about_desc">A fast, private, and offline Markdown note-taking app with encrypted API key vault.</string>
+    <string name="settings_github_link">View Source on GitHub</string>
+
+    <!-- Export / Import Dialogs -->
+    <string name="export_success">Notes exported successfully</string>
+    <string name="export_failed">Failed to export notes</string>
+    <string name="import_success">Imported %1$d notes successfully</string>
+    <string name="import_failed">Failed to import notes from zip</string>
+</resources>
