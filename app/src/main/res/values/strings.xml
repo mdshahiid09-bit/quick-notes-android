@@ -264,4 +264,24 @@
     <string name="export_failed">Failed to export notes</string>
     <string name="import_success">Imported %1$d notes successfully</string>
     <string name="import_failed">Failed to import notes from zip</string>
+
+    <!-- Folder Notes Screen -->
+    <string name="folder_notes_empty_title">No notes in this folder</string>
+    <string name="folder_notes_empty_subtitle">Create a note to save .md files directly into %1$s.</string>
+    <string name="folder_notes_create_note">Create Note in %1$s</string>
+    <string name="cd_add_note_to_folder">Create note in this folder</string>
+
+    <!-- Tag Notes Screen -->
+    <string name="tag_notes_empty_title">No notes with tag #%1$s</string>
+    <string name="tag_notes_empty_subtitle">Add #%1$s to any note to see it here.</string>
+    <string name="tag_notes_create_note">Create Note with #%1$s</string>
+    <string name="cd_add_note_with_tag">Create note with this tag</string>
+
+    <!-- Confirmation Dialogs -->
+    <string name="notes_delete_confirm_title">Delete Note?</string>
+    <string name="notes_delete_confirm_message">Move this note to Trash?</string>
+    <string name="notes_delete_selected_confirm_title">Delete Selected Notes?</string>
+    <string name="notes_delete_selected_confirm_message">Move %1$d selected note(s) to Trash?</string>
+    <string name="notes_delete_forever_confirm_title">Delete Forever?</string>
+    <string name="notes_delete_forever_confirm_message">This note will be permanently erased. This action cannot be undone.</string>
 </resources>

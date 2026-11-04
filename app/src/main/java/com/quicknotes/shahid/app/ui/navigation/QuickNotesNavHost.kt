@@ -36,6 +36,8 @@ import com.quicknotes.shahid.app.ui.screens.archive.ArchiveScreen
 import com.quicknotes.shahid.app.ui.screens.archive.ArchiveViewModel
 import com.quicknotes.shahid.app.ui.screens.editor.EditorViewModel
 import com.quicknotes.shahid.app.ui.screens.editor.MarkdownEditorScreen
+import com.quicknotes.shahid.app.ui.screens.folders.FolderNotesScreen
+import com.quicknotes.shahid.app.ui.screens.folders.FolderNotesViewModel
 import com.quicknotes.shahid.app.ui.screens.folders.FoldersScreen
 import com.quicknotes.shahid.app.ui.screens.folders.FoldersViewModel
 import com.quicknotes.shahid.app.ui.screens.home.HomeScreen
@@ -45,6 +47,8 @@ import com.quicknotes.shahid.app.ui.screens.permission.StoragePermissionScreen
 import com.quicknotes.shahid.app.ui.screens.settings.SettingsScreen
 import com.quicknotes.shahid.app.ui.screens.settings.SettingsViewModel
 import com.quicknotes.shahid.app.ui.screens.splash.SplashScreen
+import com.quicknotes.shahid.app.ui.screens.tags.TagNotesScreen
+import com.quicknotes.shahid.app.ui.screens.tags.TagNotesViewModel
 import com.quicknotes.shahid.app.ui.screens.tags.TagsScreen
 import com.quicknotes.shahid.app.ui.screens.tags.TagsViewModel
 import com.quicknotes.shahid.app.ui.screens.trash.TrashScreen
@@ -211,7 +215,35 @@ fun QuickNotesNavHost(
                     viewModel = foldersViewModel,
                     onNavigateBack = { navController.popBackStack() },
                     onFolderClick = { folderName ->
-                        navController.navigate(Screen.Home.route)
+                        navController.navigate(Screen.FolderNotes.createRoute(folderName))
+                    }
+                )
+            }
+
+            // Folder Notes
+            composable(
+                route = Screen.FolderNotes.route,
+                arguments = listOf(
+                    navArgument("folderName") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val rawFolder = backStackEntry.arguments?.getString("folderName") ?: ""
+                val folderName = android.net.Uri.decode(rawFolder)
+                val folderNotesViewModel: FolderNotesViewModel = viewModel(
+                    key = "folder_$folderName",
+                    factory = FolderNotesViewModel.provideFactory(
+                        folderName = folderName,
+                        notesRepository = appContainer.notesRepository,
+                        preferencesRepository = appContainer.preferencesRepository
+                    )
+                )
+                FolderNotesScreen(
+                    viewModel = folderNotesViewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToEditor = { noteId ->
+                        navController.navigate(Screen.Editor.createRoute(noteId = noteId, folder = folderName))
                     }
                 )
             }
@@ -225,7 +257,35 @@ fun QuickNotesNavHost(
                     viewModel = tagsViewModel,
                     onNavigateBack = { navController.popBackStack() },
                     onTagClick = { tag ->
-                        navController.navigate(Screen.Home.route)
+                        navController.navigate(Screen.TagNotes.createRoute(tag))
+                    }
+                )
+            }
+
+            // Tag Notes
+            composable(
+                route = Screen.TagNotes.route,
+                arguments = listOf(
+                    navArgument("tag") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val rawTag = backStackEntry.arguments?.getString("tag") ?: ""
+                val tag = android.net.Uri.decode(rawTag)
+                val tagNotesViewModel: TagNotesViewModel = viewModel(
+                    key = "tag_$tag",
+                    factory = TagNotesViewModel.provideFactory(
+                        tag = tag,
+                        notesRepository = appContainer.notesRepository,
+                        preferencesRepository = appContainer.preferencesRepository
+                    )
+                )
+                TagNotesScreen(
+                    viewModel = tagNotesViewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToEditor = { noteId ->
+                        navController.navigate(Screen.Editor.createRoute(noteId = noteId))
                     }
                 )
             }
@@ -310,13 +370,21 @@ fun QuickNotesNavHost(
                         type = NavType.StringType
                         nullable = true
                         defaultValue = null
+                    },
+                    navArgument("folder") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
                     }
                 )
             ) { backStackEntry ->
                 val noteId = backStackEntry.arguments?.getString("noteId")
+                val rawFolder = backStackEntry.arguments?.getString("folder")
+                val folder = if (rawFolder != null) android.net.Uri.decode(rawFolder) else null
+                val viewModelKey = if (noteId != null) "note_$noteId" else "folder_${folder ?: "default"}"
                 val editorViewModel: EditorViewModel = viewModel(
-                    key = noteId ?: "new_note",
-                    factory = EditorViewModel.provideFactory(noteId, appContainer.notesRepository)
+                    key = viewModelKey,
+                    factory = EditorViewModel.provideFactory(noteId, folder, appContainer.notesRepository)
                 )
                 MarkdownEditorScreen(
                     viewModel = editorViewModel,

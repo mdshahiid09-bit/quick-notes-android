@@ -116,6 +116,7 @@ fun HomeScreen(
     var showColorDialog by remember { mutableStateOf(false) }
     var showFolderDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
+    var showDeleteSelectedConfirmDialog by remember { mutableStateOf(false) }
 
     val importZipLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -278,7 +279,7 @@ fun HomeScreen(
                                     contentDescription = stringResource(R.string.drawer_folders)
                                 )
                             }
-                            IconButton(onClick = { viewModel.deleteSelectedNotes() }) {
+                            IconButton(onClick = { showDeleteSelectedConfirmDialog = true }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = stringResource(R.string.action_delete)
@@ -688,6 +689,40 @@ fun HomeScreen(
             confirmButton = {
                 TextButton(onClick = { showAboutDialog = false }) {
                     Text(text = stringResource(R.string.action_close))
+                }
+            }
+        )
+    }
+
+    // Delete Selected Notes Confirmation Dialog
+    if (showDeleteSelectedConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteSelectedConfirmDialog = false },
+            title = { Text(text = stringResource(R.string.notes_delete_selected_confirm_title)) },
+            text = {
+                Text(
+                    text = stringResource(
+                        R.string.notes_delete_selected_confirm_message,
+                        uiState.selectedNoteIds.size
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteSelectedConfirmDialog = false
+                        viewModel.deleteSelectedNotes()
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.action_delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteSelectedConfirmDialog = false }) {
+                    Text(text = stringResource(R.string.action_cancel))
                 }
             }
         )

@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quicknotes.shahid.app.R
+import com.quicknotes.shahid.app.data.local.db.entity.NoteEntity
 import com.quicknotes.shahid.app.ui.components.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +57,7 @@ fun TrashScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showEmptyTrashDialog by remember { mutableStateOf(false) }
+    var noteToDeleteForever by remember { mutableStateOf<NoteEntity?>(null) }
 
     Scaffold(
         topBar = {
@@ -102,6 +104,7 @@ fun TrashScreen(
                 )
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
+                    // Info Banner
                     Surface(
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                         modifier = Modifier
@@ -183,7 +186,7 @@ fun TrashScreen(
                                                 tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
-                                        IconButton(onClick = { viewModel.deleteForever(note.id) }) {
+                                        IconButton(onClick = { noteToDeleteForever = note }) {
                                             Icon(
                                                 imageVector = Icons.Default.DeleteForever,
                                                 contentDescription = stringResource(R.string.action_delete_forever),
@@ -218,6 +221,35 @@ fun TrashScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showEmptyTrashDialog = false }) {
+                    Text(text = stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    }
+
+    if (noteToDeleteForever != null) {
+        val targetNote = noteToDeleteForever
+        AlertDialog(
+            onDismissRequest = { noteToDeleteForever = null },
+            title = { Text(text = stringResource(R.string.notes_delete_forever_confirm_title)) },
+            text = { Text(text = stringResource(R.string.notes_delete_forever_confirm_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (targetNote != null) {
+                            viewModel.deleteForever(targetNote.id)
+                        }
+                        noteToDeleteForever = null
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.action_delete_forever),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { noteToDeleteForever = null }) {
                     Text(text = stringResource(R.string.action_cancel))
                 }
             }

@@ -41,10 +41,16 @@ data class EditorUiState(
 
 class EditorViewModel(
     private val noteIdArg: String?,
+    private val initialFolder: String? = null,
     private val notesRepository: NotesRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(EditorUiState(noteId = noteIdArg))
+    private val _uiState = MutableStateFlow(
+        EditorUiState(
+            noteId = noteIdArg,
+            folder = initialFolder ?: ""
+        )
+    )
     val uiState: StateFlow<EditorUiState> = _uiState.asStateFlow()
 
     private val undoStack = mutableListOf<TextFieldValue>()
@@ -97,10 +103,12 @@ class EditorViewModel(
     fun onBodyChange(newBody: TextFieldValue) {
         val oldBody = _uiState.value.body
 
+        // Check if a checklist task was newly marked completed: [ ] -> [x] or [X]
         if (oldBody.text.contains("- [ ]") && (newBody.text.contains("- [x]") || newBody.text.contains("- [X]"))) {
             _uiState.value = _uiState.value.copy(triggerConfetti = true)
         }
 
+        // Push to undo stack if text changed meaningfully
         if (oldBody.text != newBody.text) {
             undoStack.add(oldBody)
             redoStack.clear()
@@ -270,6 +278,7 @@ class EditorViewModel(
         onBodyChange(TextFieldValue(newText))
     }
 
+    // Markdown Toolbar Operations
     fun applySurrounding(prefix: String, suffix: String) {
         val tfv = _uiState.value.body
         val selection = tfv.selection
@@ -295,6 +304,7 @@ class EditorViewModel(
         val text = tfv.text
         val selection = tfv.selection
 
+        // Find line start
         val lineStart = text.lastIndexOf('\n', selection.start - 1).let { if (it == -1) 0 else it + 1 }
         val newText = text.substring(0, lineStart) + prefix + text.substring(lineStart)
         val newCursor = selection.start + prefix.length
@@ -322,13 +332,14 @@ class EditorViewModel(
         autosaveJob?.cancel()
         autosaveJob = viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSaving = true)
-            delay(1000L)
+            delay(1000L) // 1 second of inactivity
             saveNow()
         }
     }
 
     suspend fun saveNow() {
         val state = _uiState.value
+        // Avoid creating blank files if both title and body are empty
         if (state.title.isBlank() && state.body.text.isBlank()) {
             _uiState.value = state.copy(isSaving = false, isSaved = true)
             return
@@ -367,10 +378,16 @@ class EditorViewModel(
         fun provideFactory(
             noteId: String?,
             notesRepository: NotesRepository
+        ): ViewModelProvider.Factory = provideFactory(noteId, null, notesRepository)
+
+        fun provideFactory(
+            noteId: String?,
+            folder: String? = null,
+            notesRepository: NotesRepository
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return EditorViewModel(noteId, notesRepository) as T
+                return EditorViewModel(noteId, folder, notesRepository) as T
             }
         }
     }

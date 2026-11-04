@@ -117,6 +117,7 @@ fun MarkdownEditorScreen(
     var showFolderDialog by remember { mutableStateOf(false) }
     var showTagDialog by remember { mutableStateOf(false) }
     var showDiscardDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var newTagInput by remember { mutableStateOf("") }
     var linkTitleInput by remember { mutableStateOf("") }
     var linkUrlInput by remember { mutableStateOf("") }
@@ -311,8 +312,7 @@ fun MarkdownEditorScreen(
                                 },
                                 onClick = {
                                     showMenu = false
-                                    viewModel.deleteNote()
-                                    onNavigateBack()
+                                    showDeleteConfirmDialog = true
                                 }
                             )
                         }
@@ -735,6 +735,34 @@ fun MarkdownEditorScreen(
             confirmButton = {
                 TextButton(onClick = { showTagDialog = false }) {
                     Text(text = stringResource(R.string.action_close))
+                }
+            }
+        )
+    }
+
+    // Delete Note Confirmation Dialog
+    if (showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            title = { Text(text = stringResource(R.string.notes_delete_confirm_title)) },
+            text = { Text(text = stringResource(R.string.notes_delete_confirm_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirmDialog = false
+                        viewModel.deleteNote()
+                        onNavigateBack()
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.action_delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmDialog = false }) {
+                    Text(text = stringResource(R.string.action_cancel))
                 }
             }
         )
