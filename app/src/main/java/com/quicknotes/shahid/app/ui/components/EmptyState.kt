@@ -33,7 +33,7 @@ fun EmptyState(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp, vertical = 48.dp),
-        horizontalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(

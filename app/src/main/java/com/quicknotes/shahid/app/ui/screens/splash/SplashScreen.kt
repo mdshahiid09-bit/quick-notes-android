@@ -46,6 +46,7 @@ fun SplashScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
+        // Animate scale and fade in over 1000ms
         scale.animateTo(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
@@ -54,8 +55,10 @@ fun SplashScreen(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
         )
+        // Ensure total splash time is 2 seconds
         delay(1000L)
 
+        // Check if launched under disguise icon
         if (isDisguiseLaunch) {
             val isVaultSetup = preferencesRepository.isVaultSetupCompleted.first()
             if (isVaultSetup) {
@@ -70,6 +73,7 @@ fun SplashScreen(
             return@LaunchedEffect
         }
 
+        // Check storage permission
         val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Environment.isExternalStorageManager()
         } else {
@@ -90,7 +94,7 @@ fun SplashScreen(
         contentAlignment = Alignment.Center
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterVertically,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Image(

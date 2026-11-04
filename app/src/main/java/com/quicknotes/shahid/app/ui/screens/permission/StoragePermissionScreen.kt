@@ -104,7 +104,7 @@ fun StoragePermissionScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
             .padding(32.dp),
-        horizontalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(

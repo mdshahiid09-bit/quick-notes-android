@@ -92,6 +92,7 @@ fun OnboardingScreen(
             .background(MaterialTheme.colorScheme.surface)
             .padding(24.dp)
     ) {
+        // Top row with Skip button
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
@@ -109,6 +110,7 @@ fun OnboardingScreen(
 
         Spacer(modifier = Modifier.weight(0.2f))
 
+        // Pager Content
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -120,7 +122,7 @@ fun OnboardingScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterVertically,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Image(
@@ -153,11 +155,13 @@ fun OnboardingScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Bottom Controls: Animated Dot Indicator + Next/Get Started Button
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Dots
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 repeat(pages.size) { index ->
                     val isSelected = pagerState.currentPage == index
@@ -178,6 +182,7 @@ fun OnboardingScreen(
                 }
             }
 
+            // Button
             Button(
                 onClick = {
                     if (pagerState.currentPage < pages.size - 1) {
