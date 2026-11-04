@@ -30,6 +30,18 @@ data class HomeUiState(
     val recentlyArchivedNote: NoteEntity? = null
 )
 
+private data class FilterState(
+    val query: String,
+    val isSearch: Boolean,
+    val selected: Set<String>,
+    val loading: Boolean
+)
+
+private data class NotificationState(
+    val deleted: NoteEntity?,
+    val archived: NoteEntity?
+)
+
 class HomeViewModel(
     private val notesRepository: NotesRepository,
     private val preferencesRepository: UserPreferencesRepository
@@ -42,24 +54,36 @@ class HomeViewModel(
     private val _recentlyDeletedNote = MutableStateFlow<NoteEntity?>(null)
     private val _recentlyArchivedNote = MutableStateFlow<NoteEntity?>(null)
 
+    private val _filterState = combine(
+        _searchQuery,
+        _isSearchActive,
+        _selectedNoteIds,
+        _isLoading
+    ) { query, isSearch, selected, loading ->
+        FilterState(query, isSearch, selected, loading)
+    }
+
+    private val _notificationState = combine(
+        _recentlyDeletedNote,
+        _recentlyArchivedNote
+    ) { deleted, archived ->
+        NotificationState(deleted, archived)
+    }
+
     val uiState: StateFlow<HomeUiState> = combine(
         notesRepository.getActiveNotes(),
         notesRepository.getAllFolders(),
         preferencesRepository.notesViewMode,
-        _searchQuery,
-        _isSearchActive,
-        _selectedNoteIds,
-        _isLoading,
-        _recentlyDeletedNote,
-        _recentlyArchivedNote
-    ) { activeNotes, folders, viewMode, query, isSearch, selected, loading, deleted, archived ->
-        val filteredNotes = if (query.isBlank()) {
+        _filterState,
+        _notificationState
+    ) { activeNotes, folders, viewMode, filter, notif ->
+        val filteredNotes = if (filter.query.isBlank()) {
             activeNotes
         } else {
             activeNotes.filter { note ->
-                note.title.contains(query, ignoreCase = true) ||
-                        note.preview.contains(query, ignoreCase = true) ||
-                        note.tags.any { it.contains(query, ignoreCase = true) }
+                note.title.contains(filter.query, ignoreCase = true) ||
+                        note.preview.contains(filter.query, ignoreCase = true) ||
+                        note.tags.any { it.contains(filter.query, ignoreCase = true) }
             }
         }
 
@@ -70,13 +94,13 @@ class HomeViewModel(
             pinnedNotes = pinned,
             otherNotes = others,
             folders = folders,
-            isLoading = loading,
-            searchQuery = query,
-            isSearchActive = isSearch,
-            selectedNoteIds = selected,
+            isLoading = filter.loading,
+            searchQuery = filter.query,
+            isSearchActive = filter.isSearch,
+            selectedNoteIds = filter.selected,
             viewMode = viewMode,
-            recentlyDeletedNote = deleted,
-            recentlyArchivedNote = archived
+            recentlyDeletedNote = notif.deleted,
+            recentlyArchivedNote = notif.archived
         )
     }.stateIn(
         scope = viewModelScope,
@@ -91,6 +115,7 @@ class HomeViewModel(
     fun loadNotes() {
         viewModelScope.launch {
             _isLoading.value = true
+            // Enforce minimum 400ms shimmer visible time
             val startTime = System.currentTimeMillis()
             notesRepository.scanStorage()
             val elapsed = System.currentTimeMillis() - startTime
