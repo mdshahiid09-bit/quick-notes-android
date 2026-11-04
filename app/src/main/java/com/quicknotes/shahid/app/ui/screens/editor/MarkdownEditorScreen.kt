@@ -47,7 +47,6 @@ import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -117,6 +116,7 @@ fun MarkdownEditorScreen(
     var showColorDialog by remember { mutableStateOf(false) }
     var showFolderDialog by remember { mutableStateOf(false) }
     var showTagDialog by remember { mutableStateOf(false) }
+    var showDiscardDialog by remember { mutableStateOf(false) }
     var newTagInput by remember { mutableStateOf("") }
     var linkTitleInput by remember { mutableStateOf("") }
     var linkUrlInput by remember { mutableStateOf("") }
@@ -192,6 +192,7 @@ fun MarkdownEditorScreen(
                         }
                     },
                     actions = {
+                        // Toggle Edit / Preview
                         IconButton(onClick = { viewModel.togglePreviewMode() }) {
                             Icon(
                                 imageVector = if (uiState.isPreviewMode) Icons.Default.VisibilityOff else Icons.Default.Visibility,
@@ -201,14 +202,16 @@ fun MarkdownEditorScreen(
                             )
                         }
 
+                        // Pin
                         IconButton(onClick = { viewModel.togglePinned() }) {
                             Icon(
-                                imageVector = if (uiState.pinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
+                                imageVector = Icons.Default.PushPin,
                                 contentDescription = stringResource(R.string.cd_pin_note),
-                                tint = if (uiState.pinned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = if (uiState.pinned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                             )
                         }
 
+                        // More Menu
                         IconButton(onClick = { showMenu = true }) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
@@ -322,6 +325,7 @@ fun MarkdownEditorScreen(
                         .fillMaxWidth()
                         .imePadding()
                 ) {
+                    // Find and Replace panel
                     AnimatedVisibility(visible = uiState.isFindReplaceActive) {
                         Surface(
                             color = MaterialTheme.colorScheme.surfaceVariant,
@@ -391,6 +395,7 @@ fun MarkdownEditorScreen(
                         }
                     }
 
+                    // Markdown Toolbar (visible in Edit mode)
                     if (!uiState.isPreviewMode) {
                         MarkdownToolbar(
                             canUndo = uiState.canUndo,
@@ -414,6 +419,7 @@ fun MarkdownEditorScreen(
                         )
                     }
 
+                    // Word count & info bottom strip
                     Surface(
                         color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.fillMaxWidth()
@@ -447,6 +453,7 @@ fun MarkdownEditorScreen(
                     .padding(paddingValues)
             ) {
                 if (uiState.isPreviewMode) {
+                    // Rich Preview Mode
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -471,11 +478,13 @@ fun MarkdownEditorScreen(
                         )
                     }
                 } else {
+                    // Edit Mode
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 20.dp, vertical = 12.dp)
                     ) {
+                        // Tag chips row
                         if (uiState.tags.isNotEmpty()) {
                             FlowRow(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -499,6 +508,7 @@ fun MarkdownEditorScreen(
                             }
                         }
 
+                        // Live Markdown Editor
                         BasicTextField(
                             value = uiState.body,
                             onValueChange = { viewModel.onBodyChange(it) },
@@ -528,12 +538,14 @@ fun MarkdownEditorScreen(
             }
         }
 
+        // Particle explosion on checklist completion
         ParticleExplosion(
             trigger = uiState.triggerConfetti,
             onAnimationEnd = { viewModel.onConfettiHandled() }
         )
     }
 
+    // Link Dialog
     if (showLinkDialog) {
         AlertDialog(
             onDismissRequest = { showLinkDialog = false },
@@ -577,6 +589,7 @@ fun MarkdownEditorScreen(
         )
     }
 
+    // Color Dialog
     if (showColorDialog) {
         AlertDialog(
             onDismissRequest = { showColorDialog = false },
@@ -616,6 +629,7 @@ fun MarkdownEditorScreen(
         )
     }
 
+    // Folder Dialog
     if (showFolderDialog) {
         AlertDialog(
             onDismissRequest = { showFolderDialog = false },
@@ -656,6 +670,7 @@ fun MarkdownEditorScreen(
         )
     }
 
+    // Tag Editor Dialog
     if (showTagDialog) {
         AlertDialog(
             onDismissRequest = { showTagDialog = false },
@@ -740,6 +755,7 @@ fun RenderMarkdownPreview(
 
         if (trimmed.startsWith("```")) {
             if (inCodeBlock) {
+                // End code block
                 Surface(
                     shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant,
@@ -768,6 +784,7 @@ fun RenderMarkdownPreview(
             return@forEachIndexed
         }
 
+        // Checklist items
         val isTaskUnchecked = trimmed.startsWith("- [ ]")
         val isTaskChecked = trimmed.startsWith("- [x]", ignoreCase = true)
 
@@ -798,6 +815,7 @@ fun RenderMarkdownPreview(
             return@forEachIndexed
         }
 
+        // Headings
         when {
             trimmed.startsWith("# ") -> {
                 Text(
