@@ -1,0 +1,77 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.11.1
+
+      - name: Ensure Gradle Wrapper
+        run: |
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Generating Gradle wrapper..."
+            gradle wrapper --gradle-version 8.11.1
+          fi
+          chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Quick Notes v1.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: app/build/outputs/apk/debug/*.apk
+          body: |
+            ## Quick Notes Release v1.0.${{ github.run_number }}
+
+            Fresh build of **Quick Notes** for Android.
+
+            ### What's included:
+            - Full Markdown support with live formatting and YAML front matter
+            - Notes stored as standard `.md` files in `Documents/QuickNotes/`
+            - Private Vault with hardware Keystore AES-GCM encryption and PBKDF2 passcode
+            - Folders, Tags, Trash auto-purge (30 days), Archive, and Full-text Search
+            - Calculator Disguise launcher mode
+            - Dark / Light / System Material 3 themes
+
+            ### How to Install:
+            1. Download the `app-debug.apk` file below to your Android device.
+            2. Tap the downloaded file to install.
+            3. If prompted, enable **Install unknown apps** for your browser or file manager in Settings.
+            4. Launch **Quick Notes** and grant storage permissions when requested.
