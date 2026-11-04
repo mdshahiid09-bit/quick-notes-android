@@ -142,6 +142,7 @@ fun QuickNotesNavHost(
                 SplashScreen(
                     preferencesRepository = appContainer.preferencesRepository,
                     isDisguiseLaunch = isDisguiseLaunch,
+                    vaultRepository = appContainer.vaultRepository,
                     onNavigate = { route ->
                         navController.navigate(route) {
                             popUpTo(Screen.Splash.route) { inclusive = true }
@@ -166,6 +167,7 @@ fun QuickNotesNavHost(
             composable(Screen.StoragePermission.route) {
                 StoragePermissionScreen(
                     storageManager = appContainer.storageManager,
+                    vaultRepository = appContainer.vaultRepository,
                     onNavigateHome = {
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.StoragePermission.route) { inclusive = true }
@@ -242,9 +244,17 @@ fun QuickNotesNavHost(
                 FolderNotesScreen(
                     viewModel = folderNotesViewModel,
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToEditor = { noteId ->
-                        navController.navigate(Screen.Editor.createRoute(noteId = noteId, folder = folderName))
-                    }
+                    onNavigateToEditor = { noteId, initialTitle ->
+                        navController.navigate(
+                            Screen.Editor.createRoute(
+                                noteId = noteId,
+                                folder = folderName,
+                                title = initialTitle
+                            )
+                        )
+                    },
+                    downloadManager = appContainer.downloadManager,
+                    storageManager = appContainer.storageManager
                 )
             }
 
@@ -285,7 +295,7 @@ fun QuickNotesNavHost(
                     viewModel = tagNotesViewModel,
                     onNavigateBack = { navController.popBackStack() },
                     onNavigateToEditor = { noteId ->
-                        navController.navigate(Screen.Editor.createRoute(noteId = noteId))
+                        navController.navigate(Screen.Editor.createRoute(noteId))
                     }
                 )
             }
@@ -375,19 +385,33 @@ fun QuickNotesNavHost(
                         type = NavType.StringType
                         nullable = true
                         defaultValue = null
+                    },
+                    navArgument("title") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
                     }
                 )
             ) { backStackEntry ->
                 val noteId = backStackEntry.arguments?.getString("noteId")
                 val rawFolder = backStackEntry.arguments?.getString("folder")
                 val folder = if (rawFolder != null) android.net.Uri.decode(rawFolder) else null
-                val viewModelKey = if (noteId != null) "note_$noteId" else "folder_${folder ?: "default"}"
+                val rawTitle = backStackEntry.arguments?.getString("title")
+                val title = if (rawTitle != null) android.net.Uri.decode(rawTitle) else null
+
+                val viewModelKey = if (noteId != null) "note_$noteId" else "folder_${folder ?: "default"}_title_${title ?: "new"}"
                 val editorViewModel: EditorViewModel = viewModel(
                     key = viewModelKey,
-                    factory = EditorViewModel.provideFactory(noteId, folder, appContainer.notesRepository)
+                    factory = EditorViewModel.provideFactory(
+                        noteId = noteId,
+                        folder = folder,
+                        initialTitle = title,
+                        notesRepository = appContainer.notesRepository
+                    )
                 )
                 MarkdownEditorScreen(
                     viewModel = editorViewModel,
+                    downloadManager = appContainer.downloadManager,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }

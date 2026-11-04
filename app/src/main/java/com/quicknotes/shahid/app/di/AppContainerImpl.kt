@@ -1,8 +1,10 @@
 package com.quicknotes.shahid.app.di
 
 import android.content.Context
+import android.content.Intent
 import com.quicknotes.shahid.app.data.local.db.QuickNotesDatabase
 import com.quicknotes.shahid.app.data.local.preferences.UserPreferencesRepository
+import com.quicknotes.shahid.app.data.local.storage.DocumentDownloadManager
 import com.quicknotes.shahid.app.data.local.storage.MarkdownStorageManager
 import com.quicknotes.shahid.app.data.local.storage.ZipExportImportManager
 import com.quicknotes.shahid.app.data.local.vault.VaultRepository
@@ -27,6 +29,10 @@ class AppContainerImpl(private val context: Context) : AppContainer {
 
     override val zipManager: ZipExportImportManager by lazy {
         ZipExportImportManager(context, storageManager)
+    }
+
+    override val downloadManager: DocumentDownloadManager by lazy {
+        DocumentDownloadManager(context)
     }
 
     override val securityManager: VaultSecurityManager by lazy {

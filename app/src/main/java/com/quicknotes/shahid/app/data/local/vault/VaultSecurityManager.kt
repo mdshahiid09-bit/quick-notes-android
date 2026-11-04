@@ -11,6 +11,7 @@ import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
 
 enum class PasscodeStrength {
     WEAK, FAIR, STRONG
@@ -69,6 +70,34 @@ class VaultSecurityManager {
 
     fun decrypt(cipherTextBase64: String, ivBase64: String): String {
         val secretKey = getOrCreateSecretKey()
+        val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
+        val iv = Base64.decode(ivBase64, Base64.NO_WRAP)
+        val cipherBytes = Base64.decode(cipherTextBase64, Base64.NO_WRAP)
+        val spec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+        val plainBytes = cipher.doFinal(cipherBytes)
+        return String(plainBytes, Charsets.UTF_8)
+    }
+
+    fun deriveKey(secret: String, salt: ByteArray): SecretKey {
+        val spec = PBEKeySpec(secret.toCharArray(), salt, ITERATIONS, KEY_LENGTH)
+        val factory = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM)
+        val keyBytes = factory.generateSecret(spec).encoded
+        return SecretKeySpec(keyBytes, "AES")
+    }
+
+    fun encryptWithKey(plainText: String, secretKey: SecretKey): Pair<String, String> {
+        val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        val iv = cipher.iv
+        val cipherBytes = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
+        return Pair(
+            Base64.encodeToString(cipherBytes, Base64.NO_WRAP),
+            Base64.encodeToString(iv, Base64.NO_WRAP)
+        )
+    }
+
+    fun decryptWithKey(cipherTextBase64: String, ivBase64: String, secretKey: SecretKey): String {
         val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
         val iv = Base64.decode(ivBase64, Base64.NO_WRAP)
         val cipherBytes = Base64.decode(cipherTextBase64, Base64.NO_WRAP)

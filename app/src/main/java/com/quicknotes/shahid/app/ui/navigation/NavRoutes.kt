@@ -18,14 +18,17 @@ sealed class Screen(val route: String) {
     data object Trash : Screen("trash")
     data object Archive : Screen("archive")
     data object Vault : Screen("vault")
-    data object Editor : Screen("editor?noteId={noteId}&folder={folder}") {
-        fun createRoute(noteId: String? = null, folder: String? = null): String {
+    data object Editor : Screen("editor?noteId={noteId}&folder={folder}&title={title}") {
+        fun createRoute(noteId: String? = null, folder: String? = null, title: String? = null): String {
             val params = mutableListOf<String>()
             if (!noteId.isNullOrBlank()) {
                 params.add("noteId=$noteId")
             }
             if (!folder.isNullOrBlank()) {
                 params.add("folder=${android.net.Uri.encode(folder)}")
+            }
+            if (!title.isNullOrBlank()) {
+                params.add("title=${android.net.Uri.encode(title)}")
             }
             return if (params.isEmpty()) "editor" else "editor?" + params.joinToString("&")
         }

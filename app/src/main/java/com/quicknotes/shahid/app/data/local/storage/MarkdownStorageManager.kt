@@ -31,7 +31,7 @@ class MarkdownStorageManager(
         return dir
     }
 
-    private fun getFolderDirectory(folderName: String): File {
+    fun getFolderDirectory(folderName: String): File {
         val root = getNotesRootDirectory()
         if (folderName.isBlank()) return root
         val sanitized = sanitizeFileName(folderName)
@@ -43,7 +43,8 @@ class MarkdownStorageManager(
     }
 
     fun sanitizeFileName(name: String): String {
-        val sanitized = name.replace(Regex("[\\\\/:*?\"<>|]"), "_").trim()
+        val cleanName = name.trim().removeSuffix(".md").removeSuffix(".MD")
+        val sanitized = cleanName.replace(Regex("[\\\\/:*?\"<>|]"), "_").trim()
         return if (sanitized.isEmpty()) "Untitled" else sanitized.take(80)
     }
 
@@ -55,7 +56,10 @@ class MarkdownStorageManager(
         val folderDao = database.folderDao()
         val now = System.currentTimeMillis()
 
+        // 1. Auto-purge old trash (older than 30 days)
         val purgeThreshold = now - THIRTY_DAYS_MS
+        val existingTrash = noteDao.getTrashNotes()
+        // Purge files from disk
         val oldNotes = noteDao.getAllNotesSync().filter { it.isTrash && it.trashedAt != null && it.trashedAt < purgeThreshold }
         for (oldNote in oldNotes) {
             val file = File(oldNote.filePath)
@@ -65,6 +69,7 @@ class MarkdownStorageManager(
             noteDao.deleteById(oldNote.id)
         }
 
+        // 2. Discover folders and files
         val discoveredFiles = mutableListOf<File>()
         val discoveredFolders = mutableSetOf<String>()
 
@@ -82,6 +87,7 @@ class MarkdownStorageManager(
 
         traverse(root, "")
 
+        // Sync folders to Room
         for (folderName in discoveredFolders) {
             val existing = folderDao.getFolderByName(folderName)
             if (existing == null) {
@@ -95,6 +101,7 @@ class MarkdownStorageManager(
             }
         }
 
+        // Sync notes to Room
         val existingNotes = noteDao.getAllNotesSync().associateBy { it.filePath }
         val activePathsOnDisk = mutableSetOf<String>()
 
@@ -112,6 +119,7 @@ class MarkdownStorageManager(
                     val noteTitle = FrontMatterParser.extractTitle(body, file.nameWithoutExtension)
                     val preview = FrontMatterParser.stripMarkdownForPreview(body)
 
+                    // Determine folder from relative path
                     val parentFile = file.parentFile
                     val folderName = if (parentFile != null && parentFile.absolutePath != root.absolutePath) {
                         parentFile.name
@@ -147,6 +155,7 @@ class MarkdownStorageManager(
             }
         }
 
+        // 3. Remove notes that were deleted on disk outside app
         for ((existingPath, note) in existingNotes) {
             if (!activePathsOnDisk.contains(existingPath)) {
                 noteDao.deleteByPath(existingPath)
@@ -174,6 +183,7 @@ class MarkdownStorageManager(
         val targetDir = getFolderDirectory(folder)
         val sanitizedTitle = sanitizeFileName(if (title.isBlank()) "Untitled" else title)
 
+        // Resolve file path
         var file = if (existingNote != null) {
             val oldFile = File(existingNote.filePath)
             val parentMatches = oldFile.parentFile?.absolutePath == targetDir.absolutePath
@@ -181,6 +191,7 @@ class MarkdownStorageManager(
             if (parentMatches && titleMatches) {
                 oldFile
             } else {
+                // Moving or renaming file
                 val newFile = generateUniqueFile(targetDir, sanitizedTitle)
                 if (oldFile.exists()) {
                     oldFile.delete()
@@ -300,6 +311,8 @@ class MarkdownStorageManager(
 
         folderDao.renameFolder(id, newName)
         noteDao.renameFolderInNotes(oldName, newName)
+
+        // Rescan to update file paths
         scanStorage()
     }
 
@@ -307,9 +320,11 @@ class MarkdownStorageManager(
         val folderDao = database.folderDao()
         val noteDao = database.noteDao()
 
+        // Move notes to trash
         noteDao.trashNotesInFolder(name, System.currentTimeMillis())
         folderDao.deleteFolder(id)
 
+        // Re-serialize affected notes with trash front matter
         val notesInFolder = noteDao.getAllNotesSync().filter { it.folder == name }
         for (note in notesInFolder) {
             val file = File(note.filePath)

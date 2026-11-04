@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quicknotes.shahid.app.R
 import com.quicknotes.shahid.app.data.local.preferences.UserPreferencesRepository
+import com.quicknotes.shahid.app.data.local.vault.VaultRepository
 import com.quicknotes.shahid.app.ui.navigation.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -39,6 +40,7 @@ import kotlinx.coroutines.flow.first
 fun SplashScreen(
     preferencesRepository: UserPreferencesRepository,
     isDisguiseLaunch: Boolean,
+    vaultRepository: VaultRepository? = null,
     onNavigate: (String) -> Unit
 ) {
     val scale = remember { Animatable(0.7f) }
@@ -58,6 +60,17 @@ fun SplashScreen(
         // Ensure total splash time is 2 seconds
         delay(1000L)
 
+        // Check storage permission
+        val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            true
+        }
+
+        if (hasStoragePermission) {
+            vaultRepository?.checkAndRestoreFromPersistentStorage()
+        }
+
         // Check if launched under disguise icon
         if (isDisguiseLaunch) {
             val isVaultSetup = preferencesRepository.isVaultSetupCompleted.first()
@@ -71,13 +84,6 @@ fun SplashScreen(
         if (!isOnboardingDone) {
             onNavigate(Screen.Onboarding.route)
             return@LaunchedEffect
-        }
-
-        // Check storage permission
-        val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Environment.isExternalStorageManager()
-        } else {
-            true
         }
 
         if (!hasStoragePermission) {
@@ -101,28 +107,29 @@ fun SplashScreen(
                 painter = painterResource(id = R.drawable.ic_app_logo),
                 contentDescription = stringResource(R.string.cd_app_logo),
                 modifier = Modifier
-                    .size(110.dp)
+                    .size(96.dp)
                     .scale(scale.value)
                     .alpha(alpha.value)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.alpha(alpha.value)
+                modifier = Modifier
+                    .scale(scale.value)
+                    .alpha(alpha.value)
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = stringResource(R.string.app_tagline),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                letterSpacing = 0.5.sp,
                 modifier = Modifier.alpha(alpha.value)
             )
         }

@@ -37,12 +37,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.quicknotes.shahid.app.R
 import com.quicknotes.shahid.app.data.local.storage.MarkdownStorageManager
+import com.quicknotes.shahid.app.data.local.vault.VaultRepository
 import com.quicknotes.shahid.app.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
 @Composable
 fun StoragePermissionScreen(
     storageManager: MarkdownStorageManager,
+    vaultRepository: VaultRepository? = null,
     onNavigateHome: () -> Unit
 ) {
     val context = LocalContext.current
@@ -59,6 +61,7 @@ fun StoragePermissionScreen(
         if (granted) {
             scope.launch {
                 storageManager.scanStorage()
+                vaultRepository?.checkAndRestoreFromPersistentStorage()
                 onNavigateHome()
             }
         }
@@ -103,17 +106,17 @@ fun StoragePermissionScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(32.dp),
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_empty_notes),
-            contentDescription = stringResource(R.string.permission_storage_title),
-            modifier = Modifier.size(130.dp)
+            contentDescription = null,
+            modifier = Modifier.size(120.dp)
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = stringResource(R.string.permission_storage_title),
@@ -123,24 +126,31 @@ fun StoragePermissionScreen(
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(R.string.permission_storage_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            lineHeight = 22.sp
+            lineHeight = 22.sp,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Button(
             onClick = { requestStorageAccess() },
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
-            Text(text = stringResource(R.string.permission_storage_action))
+            Text(
+                text = stringResource(R.string.permission_storage_action),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -148,9 +158,14 @@ fun StoragePermissionScreen(
         OutlinedButton(
             onClick = { checkAndProceed() },
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
-            Text(text = stringResource(R.string.action_refresh))
+            Text(
+                text = stringResource(R.string.action_refresh),
+                style = MaterialTheme.typography.labelLarge
+            )
         }
     }
 }

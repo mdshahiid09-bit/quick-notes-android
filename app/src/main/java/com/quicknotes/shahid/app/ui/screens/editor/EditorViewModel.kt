@@ -42,12 +42,14 @@ data class EditorUiState(
 class EditorViewModel(
     private val noteIdArg: String?,
     private val initialFolder: String? = null,
+    private val initialTitle: String? = null,
     private val notesRepository: NotesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         EditorUiState(
             noteId = noteIdArg,
+            title = initialTitle ?: "",
             folder = initialFolder ?: ""
         )
     )
@@ -378,16 +380,17 @@ class EditorViewModel(
         fun provideFactory(
             noteId: String?,
             notesRepository: NotesRepository
-        ): ViewModelProvider.Factory = provideFactory(noteId, null, notesRepository)
+        ): ViewModelProvider.Factory = provideFactory(noteId, null, null, notesRepository)
 
         fun provideFactory(
             noteId: String?,
             folder: String? = null,
+            initialTitle: String? = null,
             notesRepository: NotesRepository
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return EditorViewModel(noteId, folder, notesRepository) as T
+                return EditorViewModel(noteId, folder, initialTitle, notesRepository) as T
             }
         }
     }

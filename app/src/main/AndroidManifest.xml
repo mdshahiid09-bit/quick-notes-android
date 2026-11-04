@@ -22,10 +22,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QuickNotes"
+        android:hasFragileUserData="true"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="35">
 
-        <!-- Main base Activity -->
+        <!-- Main base Activity (not directly launched from launcher, aliases handle launcher entry) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -48,7 +49,7 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- Disguised Launcher Alias: Calculator -->
+        <!-- Disguised Launcher Alias: Calculator (Disabled by default, enabled via Settings) -->
         <activity-alias
             android:name=".DisguiseActivityAlias"
             android:targetActivity=".MainActivity"
@@ -63,7 +64,7 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- FileProvider -->
+        <!-- FileProvider for sharing Markdown files and exports securely -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

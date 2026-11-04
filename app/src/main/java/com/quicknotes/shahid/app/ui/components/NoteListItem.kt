@@ -23,12 +23,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
@@ -48,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quicknotes.shahid.app.R
 import com.quicknotes.shahid.app.data.local.db.entity.NoteEntity
+import java.io.File
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 
@@ -61,6 +64,7 @@ fun NoteListItem(
     onLongClick: () -> Unit,
     onSwipeToTrash: () -> Unit,
     onSwipeToArchive: () -> Unit,
+    onDownloadClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val dismissState = rememberSwipeToDismissBoxState(
@@ -199,6 +203,48 @@ fun NoteListItem(
 
                     Spacer(modifier = Modifier.height(6.dp))
 
+                    // Document info row: MD badge, document file name, and file size
+                    val docFileName = if (note.filePath.isNotBlank()) File(note.filePath).name else "${note.title.ifBlank { "document" }}.md"
+                    val fileSizeStr = formatNoteFileSize(note.filePath)
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 3.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(3.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.padding(end = 5.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.file_badge_md),
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = 3.dp, vertical = 1.dp)
+                            )
+                        }
+                        Text(
+                            text = docFileName,
+                            style = MaterialTheme.typography.labelSmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace),
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
+                        )
+                        if (fileSizeStr.isNotBlank()) {
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = fileSizeStr,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -236,11 +282,27 @@ fun NoteListItem(
                             }
                         }
 
-                        Text(
-                            text = formatNoteDate(note.updatedAt),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.outline
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (onDownloadClick != null && !isSelectionMode) {
+                                IconButton(
+                                    onClick = onDownloadClick,
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Download,
+                                        contentDescription = stringResource(R.string.cd_download_file),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                            Text(
+                                text = formatNoteDate(note.updatedAt),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
                     }
                 }
             }

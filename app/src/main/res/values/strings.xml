@@ -284,4 +284,19 @@
     <string name="notes_delete_selected_confirm_message">Move %1$d selected note(s) to Trash?</string>
     <string name="notes_delete_forever_confirm_title">Delete Forever?</string>
     <string name="notes_delete_forever_confirm_message">This note will be permanently erased. This action cannot be undone.</string>
+
+    <!-- Document Naming and Downloads -->
+    <string name="action_download">Download</string>
+    <string name="cd_download_file">Download document to device Downloads folder</string>
+    <string name="cd_download_folder">Download folder documents as ZIP</string>
+    <string name="download_file_success">Downloaded %1$s to Downloads</string>
+    <string name="download_folder_success">Downloaded %1$s to Downloads</string>
+    <string name="download_failed">Failed to download document</string>
+    <string name="dialog_new_doc_title">New Document in %1$s</string>
+    <string name="dialog_new_doc_hint">e.g., master_prompt.md</string>
+    <string name="dialog_new_doc_name">Document Name</string>
+    <string name="file_badge_md">MD</string>
+
+    <!-- Persistent Vault Storage across uninstalls -->
+    <string name="vault_persistent_restored">Encrypted vault restored from device storage. Enter your passcode.</string>
 </resources>

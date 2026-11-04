@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PushPin
@@ -57,6 +58,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -91,6 +94,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import com.quicknotes.shahid.app.R
+import com.quicknotes.shahid.app.data.local.storage.DocumentDownloadManager
 import com.quicknotes.shahid.app.ui.components.ParticleExplosion
 import com.quicknotes.shahid.app.ui.theme.NoteAmberLight
 import com.quicknotes.shahid.app.ui.theme.NoteEmeraldLight
@@ -105,11 +109,13 @@ import java.io.File
 fun MarkdownEditorScreen(
     viewModel: EditorViewModel,
     onNavigateBack: () -> Unit,
+    downloadManager: DocumentDownloadManager? = null,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var showMenu by remember { mutableStateOf(false) }
     var showLinkDialog by remember { mutableStateOf(false) }
@@ -140,6 +146,7 @@ fun MarkdownEditorScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
                     title = {
@@ -212,6 +219,32 @@ fun MarkdownEditorScreen(
                             )
                         }
 
+                        // Download document directly to Downloads
+                        IconButton(onClick = {
+                            coroutineScope.launch {
+                                viewModel.saveNow()
+                                val path = uiState.filePath
+                                if (path.isNotEmpty() && downloadManager != null) {
+                                    val result = downloadManager.downloadNoteToDownloads(path, uiState.title.ifBlank { null })
+                                    if (result.isSuccess) {
+                                        val fileName = result.getOrNull()?.name ?: ""
+                                        snackbarHostState.showSnackbar(
+                                            context.getString(R.string.download_file_success, fileName)
+                                        )
+                                    } else {
+                                        snackbarHostState.showSnackbar(
+                                            context.getString(R.string.download_failed)
+                                        )
+                                    }
+                                }
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = stringResource(R.string.cd_download_file)
+                            )
+                        }
+
                         // More Menu
                         IconButton(onClick = { showMenu = true }) {
                             Icon(
@@ -224,6 +257,36 @@ fun MarkdownEditorScreen(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(R.string.action_download)) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Download,
+                                        contentDescription = stringResource(R.string.action_download)
+                                    )
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    coroutineScope.launch {
+                                        viewModel.saveNow()
+                                        val path = uiState.filePath
+                                        if (path.isNotEmpty() && downloadManager != null) {
+                                            val result = downloadManager.downloadNoteToDownloads(path, uiState.title.ifBlank { null })
+                                            if (result.isSuccess) {
+                                                val fileName = result.getOrNull()?.name ?: ""
+                                                snackbarHostState.showSnackbar(
+                                                    context.getString(R.string.download_file_success, fileName)
+                                                )
+                                            } else {
+                                                snackbarHostState.showSnackbar(
+                                                    context.getString(R.string.download_failed)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+
                             DropdownMenuItem(
                                 text = { Text(text = stringResource(R.string.action_share)) },
                                 leadingIcon = {
