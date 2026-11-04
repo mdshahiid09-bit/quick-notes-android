@@ -32,7 +32,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ColorLens
@@ -137,6 +137,7 @@ fun HomeScreen(
         }
     }
 
+    // Handle delete undo snackbar
     LaunchedEffect(uiState.recentlyDeletedNote) {
         val note = uiState.recentlyDeletedNote
         if (note != null) {
@@ -151,6 +152,7 @@ fun HomeScreen(
         }
     }
 
+    // Handle archive undo snackbar
     LaunchedEffect(uiState.recentlyArchivedNote) {
         val note = uiState.recentlyArchivedNote
         if (note != null) {
@@ -240,6 +242,7 @@ fun HomeScreen(
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = {
                 if (uiState.selectedNoteIds.isNotEmpty()) {
+                    // Selection Mode Top Bar
                     TopAppBar(
                         title = {
                             Text(
@@ -290,6 +293,7 @@ fun HomeScreen(
                         )
                     )
                 } else if (uiState.isSearchActive) {
+                    // Expanded Search Bar
                     TopAppBar(
                         title = {
                             TextField(
@@ -331,6 +335,7 @@ fun HomeScreen(
                         }
                     )
                 } else {
+                    // Normal Top Bar
                     TopAppBar(
                         title = {
                             Text(
@@ -357,7 +362,7 @@ fun HomeScreen(
                             IconButton(onClick = { viewModel.toggleViewMode() }) {
                                 Icon(
                                     imageVector = if (uiState.viewMode == NotesViewMode.GRID) {
-                                        Icons.AutoMirrored.Filled.ViewList
+                                        Icons.Default.ViewList
                                     } else {
                                         Icons.Default.GridView
                                     },
@@ -419,6 +424,7 @@ fun HomeScreen(
                             }
                         } else {
                             if (uiState.viewMode == NotesViewMode.GRID) {
+                                // Grid View
                                 LazyVerticalGrid(
                                     columns = GridCells.Adaptive(minSize = 160.dp),
                                     contentPadding = PaddingValues(16.dp),
@@ -491,6 +497,7 @@ fun HomeScreen(
                                     }
                                 }
                             } else {
+                                // List View
                                 LazyColumn(
                                     contentPadding = PaddingValues(16.dp),
                                     verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -572,6 +579,7 @@ fun HomeScreen(
         }
     }
 
+    // Color Selector Dialog for selection mode
     if (showColorDialog) {
         AlertDialog(
             onDismissRequest = { showColorDialog = false },
@@ -611,6 +619,7 @@ fun HomeScreen(
         )
     }
 
+    // Move to folder dialog for selection mode
     if (showFolderDialog) {
         AlertDialog(
             onDismissRequest = { showFolderDialog = false },
@@ -651,6 +660,7 @@ fun HomeScreen(
         )
     }
 
+    // About Dialog
     if (showAboutDialog) {
         AlertDialog(
             onDismissRequest = { showAboutDialog = false },
