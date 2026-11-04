@@ -49,7 +49,9 @@ import androidx.compose.ui.unit.dp
 import com.quicknotes.shahid.app.R
 import com.quicknotes.shahid.app.data.local.db.entity.NoteEntity
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
+import androidx.compose.material3.ExperimentalMaterial3Api
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NoteListItem(
     note: NoteEntity,
