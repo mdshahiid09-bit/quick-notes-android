@@ -94,7 +94,7 @@ fun VaultSetupScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterVertically
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 imageVector = Icons.Default.Lock,
@@ -106,6 +106,7 @@ fun VaultSetupScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             if (uiState.generatedRecoveryKey.isEmpty()) {
+                // STEP 1: CREATE PASSCODE
                 Text(
                     text = stringResource(R.string.vault_setup_step1_title),
                     style = MaterialTheme.typography.headlineSmall,
@@ -143,6 +144,7 @@ fun VaultSetupScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                // Passcode strength indicator
                 if (uiState.passcode.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
                     val progress = when (uiState.passcodeStrength) {
@@ -208,6 +210,7 @@ fun VaultSetupScreen(
                     Text(text = stringResource(R.string.action_next))
                 }
             } else {
+                // STEP 2: SHOW RECOVERY KEY
                 Text(
                     text = stringResource(R.string.vault_setup_step2_title),
                     style = MaterialTheme.typography.headlineSmall,
@@ -234,7 +237,7 @@ fun VaultSetupScreen(
                 ) {
                     Column(
                         modifier = Modifier.padding(20.dp),
-                        horizontalAlignment = Alignment.CenterVertically
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = uiState.generatedRecoveryKey,

@@ -100,6 +100,7 @@ fun VaultScreen(
 
     val shakeOffset = remember { Animatable(0f) }
 
+    // Trigger shake animation & haptic feedback on failure
     LaunchedEffect(uiState.showWrongPasscodeShake) {
         if (uiState.showWrongPasscodeShake) {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -180,16 +181,18 @@ fun VaultScreen(
         ) {
             when (val state = uiState.vaultState) {
                 is VaultState.NotConfigured -> {
+                    // Navigate to setup
                     LaunchedEffect(Unit) {
                         onNavigateToSetup()
                     }
                 }
                 is VaultState.Locked -> {
+                    // LOCKED STATE
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterVertically,
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
@@ -291,6 +294,7 @@ fun VaultScreen(
                     }
                 }
                 is VaultState.Unlocked -> {
+                    // UNLOCKED STATE: LIST OF API KEYS
                     if (state.keys.isEmpty()) {
                         EmptyState(
                             iconRes = R.drawable.ic_empty_vault,
@@ -335,6 +339,7 @@ fun VaultScreen(
                                             )
 
                                             Row(verticalAlignment = Alignment.CenterVertically) {
+                                                // Edit
                                                 IconButton(onClick = {
                                                     keyToEdit = keyEntry
                                                     providerInput = keyEntry.providerName
@@ -348,6 +353,7 @@ fun VaultScreen(
                                                     )
                                                 }
 
+                                                // Delete
                                                 IconButton(onClick = { keyToDelete = keyEntry }) {
                                                     Icon(
                                                         imageVector = Icons.Default.Delete,
@@ -361,6 +367,7 @@ fun VaultScreen(
 
                                         Spacer(modifier = Modifier.height(10.dp))
 
+                                        // Key Display + Eye Toggle + Copy
                                         Surface(
                                             shape = RoundedCornerShape(10.dp),
                                             color = MaterialTheme.colorScheme.surface,
@@ -416,6 +423,7 @@ fun VaultScreen(
         }
     }
 
+    // Add API Key Dialog
     if (showAddKeyDialog) {
         AlertDialog(
             onDismissRequest = { showAddKeyDialog = false },
@@ -432,6 +440,7 @@ fun VaultScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    // Suggestion Chips
                     val suggestions = listOf("Gemini", "Groq", "OpenCode", "OpenRouter", "Custom")
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -485,6 +494,7 @@ fun VaultScreen(
         )
     }
 
+    // Edit API Key Dialog
     keyToEdit?.let { editEntry ->
         AlertDialog(
             onDismissRequest = { keyToEdit = null },
@@ -529,6 +539,7 @@ fun VaultScreen(
         )
     }
 
+    // Delete Confirmation Dialog
     keyToDelete?.let { delEntry ->
         AlertDialog(
             onDismissRequest = { keyToDelete = null },
